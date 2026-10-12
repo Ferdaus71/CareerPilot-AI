@@ -3,6 +3,8 @@ pandas
 numpy
 scikit-learn
 pymupdf
+pytesseract
+Pillow
 fastapi>=0.111.0
 uvicorn
 pytest

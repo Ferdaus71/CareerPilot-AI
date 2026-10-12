@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 from pathlib import Path
 from typing import BinaryIO
 
@@ -18,6 +19,30 @@ def _validate_pdf_bytes(file_bytes: bytes, file_name: str | None = None) -> None
     pdf_name = (file_name or "resume.pdf").lower()
     if not pdf_name.endswith(".pdf"):
         raise ValueError("Only PDF files are supported.")
+
+
+def _attempt_ocr_from_document(document: fitz.Document) -> str:
+    try:
+        import pytesseract
+        from PIL import Image
+    except ImportError:
+        return ""
+
+    try:
+        pytesseract.get_tesseract_version()
+    except Exception:
+        return ""
+
+    pages: list[str] = []
+    for page in document:
+        pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+        image_bytes = pix.tobytes("png")
+        image = Image.open(io.BytesIO(image_bytes))
+        text = pytesseract.image_to_string(image, config="--psm 6")
+        if text and text.strip():
+            pages.append(text.strip())
+
+    return "\n".join(pages)
 
 
 def extract_pdf_text(file_bytes: bytes | BinaryIO | str | Path, file_name: str | None = None) -> str:
@@ -55,8 +80,11 @@ def extract_pdf_text(file_bytes: bytes | BinaryIO | str | Path, file_name: str |
                 pages.append(text)
 
         if not pages:
+            ocr_text = _attempt_ocr_from_document(document)
+            if ocr_text.strip():
+                return ocr_text
             raise ValueError(
-                "No readable text could be extracted from the PDF. Scanned image-only PDFs require OCR, which is not included in this version."
+                "No readable text could be extracted from the PDF. Scanned image-only PDFs require OCR support, which is not available in this environment."
             )
 
         return "\n".join(pages)

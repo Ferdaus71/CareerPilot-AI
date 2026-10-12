@@ -9,6 +9,22 @@ from careerpilot.recommendations import build_recommendations
 from careerpilot.skills import detect_skills, get_skill_gap
 
 
+def test_ocr_fallback_is_used_when_page_is_empty(monkeypatch) -> None:
+    def fake_attempt_ocr(document):
+        return "OCR extraction from scanned document"
+
+    monkeypatch.setattr("careerpilot.pdf_extractor._attempt_ocr_from_document", fake_attempt_ocr)
+
+    document = fitz.open()
+    page = document.new_page()
+    page.insert_text((72, 72), " ")
+    pdf_bytes = document.tobytes()
+    document.close()
+
+    text = extract_pdf_text(pdf_bytes, "resume.pdf")
+    assert text == "OCR extraction from scanned document"
+
+
 def test_identical_text_similarity_is_high() -> None:
     text = "Python developer with machine learning and SQL experience."
     score = calculate_similarity(text, text)
