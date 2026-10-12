@@ -3,25 +3,20 @@ from __future__ import annotations
 import re
 
 from careerpilot.matching import normalize_text
+from careerpilot.skill_catalog import SKILL_ALIASES
 
-SKILL_ALIASES: dict[str, tuple[str, ...]] = {
-    "python": ("python", "py"),
-    "sql": ("sql", "postgres", "postgresql", "mysql"),
-    "machine learning": ("machine learning", "ml", "ml engineering"),
-    "data analysis": ("data analysis", "analytics", "data analytics"),
-    "deep learning": ("deep learning", "dl", "neural networks"),
-    "natural language processing": ("natural language processing", "nlp", "language processing"),
-    "data visualization": ("data visualization", "visualization", "tableau", "power bi"),
-    "cloud": ("cloud", "aws", "azure", "gcp"),
-    "docker": ("docker", "containers"),
-    "software engineering": ("software engineering", "swe", "engineering"),
-    "pandas": ("pandas", "python pandas"),
-    "scikit-learn": ("scikit-learn", "sklearn"),
-    "excel": ("excel", "microsoft excel"),
-    "statistics": ("statistics", "statistical analysis"),
-    "communication": ("communication", "stakeholder communication"),
-    "project management": ("project management", "agile", "scrum"),
-}
+
+def _alias_pattern(alias: str) -> str:
+    alias_normalized = alias.strip().lower()
+    if not alias_normalized:
+        return ""
+
+    parts = [re.escape(part) for part in alias_normalized.split()]
+    if len(parts) == 1:
+        return rf"(?<![a-z0-9]){parts[0]}(?![a-z0-9])"
+
+    separator = r"\s+".join(parts)
+    return rf"(?<![a-z0-9]){separator}(?![a-z0-9])"
 
 
 def detect_skills(text: str) -> set[str]:
@@ -34,10 +29,11 @@ def detect_skills(text: str) -> set[str]:
 
     matches: set[str] = set()
     for skill_name, aliases in SKILL_ALIASES.items():
-        pattern_parts = [re.escape(alias) for alias in aliases]
-        combined = "|".join(pattern_parts)
-        if re.search(rf"(?<![a-z0-9])(?:{combined})(?![a-z0-9])", normalized):
-            matches.add(skill_name)
+        for alias in aliases:
+            pattern = _alias_pattern(alias)
+            if pattern and re.search(pattern, normalized):
+                matches.add(skill_name)
+                break
     return matches
 
 

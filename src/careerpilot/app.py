@@ -10,6 +10,7 @@ if __package__ in (None, ""):
 
 from careerpilot.matching import compare_resume_job
 from careerpilot.pdf_extractor import extract_pdf_text
+from careerpilot.recommendations import build_recommendations
 from careerpilot.skills import detect_skills, get_skill_gap
 
 st.set_page_config(page_title="CareerPilot AI", page_icon="🚀", layout="wide")
@@ -27,6 +28,7 @@ def _render_results(resume_text: str, job_text: str) -> None:
     resume_skills = detect_skills(resume_text)
     job_skills = detect_skills(job_text)
     skill_gap = get_skill_gap(resume_text, job_text)
+    career_focus = build_recommendations(skill_gap["missing_skills"])
 
     st.subheader("Analysis results")
     st.metric("Resume-to-job similarity", f"{score['score'] * 100:.1f}%")
@@ -58,10 +60,15 @@ def _render_results(resume_text: str, job_text: str) -> None:
     else:
         st.write("Your resume already reflects many of the job requirements.")
 
+    st.markdown("### Career focus")
+    for recommendation in career_focus:
+        st.write(f"- {recommendation}")
+
     if resume_skills or job_skills:
         st.markdown("### Skill overview")
         st.write(f"Resume skills: {', '.join(sorted(resume_skills)) or 'None detected'}")
         st.write(f"Job skills: {', '.join(sorted(job_skills)) or 'None detected'}")
+        st.caption("A skill may not be detected in the text even when a candidate has practical experience with it.")
 
 
 def main() -> None:

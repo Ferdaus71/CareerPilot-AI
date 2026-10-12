@@ -4,6 +4,7 @@ import fitz
 
 from careerpilot.matching import calculate_similarity, compare_resume_job
 from careerpilot.pdf_extractor import extract_pdf_text
+from careerpilot.recommendations import build_recommendations
 from careerpilot.skills import detect_skills, get_skill_gap
 
 
@@ -60,15 +61,26 @@ def test_extract_pdf_text_rejects_empty_or_invalid_pdf() -> None:
         pass
 
 
-def test_skill_detection_and_gap_analysis() -> None:
+def test_skill_detection_supports_aliases_and_avoids_false_matches() -> None:
+    text = "Worked with Python, SQL, and NLP in a cloud environment."
+    skills = detect_skills(text)
+    assert "python" in skills
+    assert "sql" in skills
+    assert "natural language processing" in skills
+    assert "cloud" in skills
+    assert "machine learning" not in detect_skills("I sent an email this afternoon and met the team.")
+
+
+def test_skill_gap_and_recommendation_engine() -> None:
     resume = "I am a Python developer with SQL and data analysis experience."
     job = "Need Python, SQL, machine learning, and cloud experience."
-
-    assert "python" in detect_skills(resume)
-    assert "sql" in detect_skills(job)
 
     gap = get_skill_gap(resume, job)
     assert "python" in gap["matched_skills"]
     assert "sql" in gap["matched_skills"]
     assert "machine learning" in gap["missing_skills"]
     assert gap["recommendations"]
+
+    recommendations = build_recommendations(gap["missing_skills"])
+    assert recommendations
+    assert any("Machine Learning Engineer" in item or "Data Scientist" in item for item in recommendations)
