@@ -1,0 +1,11 @@
+streamlit
+pandas
+numpy
+scikit-learn
+pymupdf
+fastapi
+uvicorn
+pytest
+httpx
+ruff
+requests

@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.env
+.streamlit/secrets.toml
+.pytest_cache/
+.ruff_cache/
+.vscode/
+.DS_Store
+*.log
+local_uploads/
+*.pdf
+!tests/fixtures/**/*.pdf
