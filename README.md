@@ -15,7 +15,7 @@ Many job seekers struggle to translate their experience into a strong match for 
 - Review a similarity score based on TF-IDF and cosine similarity
 - Detect matched and missing skills using a configurable skill catalog
 - Receive role-oriented recommendations based on the analysis
-- Review a clear match status, skill coverage, and summary counts
+- Review a clear match status, skill coverage, and best-fit role summary
 - Run a local Streamlit dashboard with a richer analytics view
 - Use a FastAPI backend for structured JSON analysis
 - Export a JSON analysis report from the dashboard

@@ -15,6 +15,43 @@ CAREER_FOCUS_MAP: dict[str, tuple[str, ...]] = {
 }
 
 
+def _role_scores_for_skills(matched_skills: list[str], missing_skills: list[str]) -> dict[str, int]:
+    role_scores: dict[str, int] = {}
+
+    for skill in matched_skills:
+        lower_skill = skill.lower()
+        for role in CAREER_FOCUS_MAP.get(lower_skill, (skill.title(),)):
+            role_scores[role] = role_scores.get(role, 0) + 3
+
+    for skill in missing_skills:
+        lower_skill = skill.lower()
+        for role in CAREER_FOCUS_MAP.get(lower_skill, (skill.title(),)):
+            role_scores[role] = role_scores.get(role, 0) - 1
+
+    return role_scores
+
+
+def infer_best_role(matched_skills: list[str], missing_skills: list[str]) -> str:
+    """Pick the strongest role alignment from the matched and missing skill mix."""
+    role_scores = _role_scores_for_skills(matched_skills, missing_skills)
+    if not role_scores:
+        return "Generalist Analyst"
+
+    best_role, best_score = min(role_scores.items(), key=lambda item: (-item[1], item[0]))
+    if best_score <= 0:
+        return "Generalist Analyst"
+    return best_role
+
+
+def summarize_strengths(matched_skills: list[str]) -> list[str]:
+    """Return the strongest certainties from the matched skill set."""
+    if not matched_skills:
+        return ["No clearly matched skills identified yet."]
+
+    ordered = sorted(matched_skills, key=lambda skill: len(skill))
+    return ordered[:3]
+
+
 def build_recommendations(missing_skills: list[str]) -> list[str]:
     """Generate transparent, rule-based career recommendations."""
     if not missing_skills:

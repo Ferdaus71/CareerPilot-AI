@@ -45,6 +45,10 @@ def _render_results(resume_text: str, job_text: str) -> None:
     summary_col3.metric("Skill coverage", f"{analysis['skill_coverage']:.1f}%")
     st.progress(min(1.0, max(0.0, analysis["skill_coverage"] / 100)))
 
+    st.markdown(f"### Best-fit role: {analysis['best_role']}")
+    if analysis["top_strengths"]:
+        st.write("Top strengths: " + ", ".join(analysis["top_strengths"]))
+
     st.caption(
         "This score measures text similarity between the resume and job description. It is not a probability of being hired or a validated candidate-quality score."
     )

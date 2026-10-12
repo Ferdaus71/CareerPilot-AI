@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 from careerpilot.matching import compare_resume_job
-from careerpilot.recommendations import build_recommendations
+from careerpilot.recommendations import (
+    build_recommendations,
+    infer_best_role,
+    summarize_strengths,
+)
 from careerpilot.skills import detect_skills, get_skill_gap
 
 
@@ -54,6 +58,8 @@ def build_analysis_result(resume_text: str, job_text: str) -> dict[str, object]:
         skill_gap["missing_skills"],
         sorted_job_skills,
     )
+    best_role = infer_best_role(skill_gap["matched_skills"], skill_gap["missing_skills"])
+    top_strengths = summarize_strengths(skill_gap["matched_skills"])
 
     return {
         "similarity": similarity,
@@ -69,4 +75,6 @@ def build_analysis_result(resume_text: str, job_text: str) -> dict[str, object]:
         "matched_skill_count": len(skill_gap["matched_skills"]),
         "missing_skill_count": len(skill_gap["missing_skills"]),
         "job_skill_count": len(sorted_job_skills),
+        "best_role": best_role,
+        "top_strengths": top_strengths,
     }

@@ -29,6 +29,8 @@ class AnalysisResponse(BaseModel):
     matched_skill_count: int
     missing_skill_count: int
     job_skill_count: int
+    best_role: str
+    top_strengths: list[str]
 
 
 @app.get("/health")
@@ -58,6 +60,8 @@ def analyze_payload(payload: AnalysisRequest) -> AnalysisResponse:
         matched_skill_count=int(analysis["matched_skill_count"]),
         missing_skill_count=int(analysis["missing_skill_count"]),
         job_skill_count=int(analysis["job_skill_count"]),
+        best_role=str(analysis["best_role"]),
+        top_strengths=list(analysis["top_strengths"]),
     )
 
 
@@ -95,4 +99,6 @@ async def analyze_uploaded_resume(
         matched_skill_count=int(analysis["matched_skill_count"]),
         missing_skill_count=int(analysis["missing_skill_count"]),
         job_skill_count=int(analysis["job_skill_count"]),
+        best_role=str(analysis["best_role"]),
+        top_strengths=list(analysis["top_strengths"]),
     )
