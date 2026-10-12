@@ -38,6 +38,13 @@ def _render_results(resume_text: str, job_text: str) -> None:
     st.metric("Resume-to-job similarity", f"{float(score['score']) * 100:.1f}%")
     match_summary = analysis["match_summary"]
     st.info(f"{match_summary['label']} • {match_summary['summary']}")
+
+    summary_col1, summary_col2, summary_col3 = st.columns(3)
+    summary_col1.metric("Matched skills", analysis["matched_skill_count"])
+    summary_col2.metric("Missing skills", analysis["missing_skill_count"])
+    summary_col3.metric("Skill coverage", f"{analysis['skill_coverage']:.1f}%")
+    st.progress(min(1.0, max(0.0, analysis["skill_coverage"] / 100)))
+
     st.caption(
         "This score measures text similarity between the resume and job description. It is not a probability of being hired or a validated candidate-quality score."
     )

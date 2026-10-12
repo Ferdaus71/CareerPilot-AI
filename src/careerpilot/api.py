@@ -26,6 +26,9 @@ class AnalysisResponse(BaseModel):
     match_status: str
     match_summary: str
     skill_coverage: float
+    matched_skill_count: int
+    missing_skill_count: int
+    job_skill_count: int
 
 
 @app.get("/health")
@@ -52,6 +55,9 @@ def analyze_payload(payload: AnalysisRequest) -> AnalysisResponse:
         match_status=str(analysis["match_status"]),
         match_summary=str(analysis["match_summary"]["summary"]),
         skill_coverage=float(analysis["skill_coverage"]),
+        matched_skill_count=int(analysis["matched_skill_count"]),
+        missing_skill_count=int(analysis["missing_skill_count"]),
+        job_skill_count=int(analysis["job_skill_count"]),
     )
 
 
@@ -86,4 +92,7 @@ async def analyze_uploaded_resume(
         match_status=str(analysis["match_status"]),
         match_summary=str(analysis["match_summary"]["summary"]),
         skill_coverage=float(analysis["skill_coverage"]),
+        matched_skill_count=int(analysis["matched_skill_count"]),
+        missing_skill_count=int(analysis["missing_skill_count"]),
+        job_skill_count=int(analysis["job_skill_count"]),
     )

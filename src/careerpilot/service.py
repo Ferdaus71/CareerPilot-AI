@@ -66,4 +66,7 @@ def build_analysis_result(resume_text: str, job_text: str) -> dict[str, object]:
         "match_summary": match_summary,
         "match_status": match_summary["status"],
         "skill_coverage": match_summary["coverage"],
+        "matched_skill_count": len(skill_gap["matched_skills"]),
+        "missing_skill_count": len(skill_gap["missing_skills"]),
+        "job_skill_count": len(sorted_job_skills),
     }
