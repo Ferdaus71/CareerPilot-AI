@@ -4,6 +4,7 @@ from careerpilot.matching import compare_resume_job
 from careerpilot.recommendations import (
     build_recommendations,
     infer_best_role,
+    rank_roles,
     summarize_strengths,
 )
 from careerpilot.skill_catalog import SKILL_CATEGORIES
@@ -114,6 +115,7 @@ def build_analysis_result(resume_text: str, job_text: str) -> dict[str, object]:
         sorted_job_skills,
     )
     best_role = infer_best_role(skill_gap["matched_skills"], skill_gap["missing_skills"])
+    recommended_roles = rank_roles(skill_gap["matched_skills"], skill_gap["missing_skills"])
     top_strengths = summarize_strengths(skill_gap["matched_skills"])
     category_summary = _build_category_summary(skill_gap["matched_skills"], skill_gap["missing_skills"])
     learning_roadmap = _build_learning_roadmap(skill_gap["missing_skills"])
@@ -133,6 +135,7 @@ def build_analysis_result(resume_text: str, job_text: str) -> dict[str, object]:
         "missing_skill_count": len(skill_gap["missing_skills"]),
         "job_skill_count": len(sorted_job_skills),
         "best_role": best_role,
+        "recommended_roles": recommended_roles,
         "top_strengths": top_strengths,
         "category_summary": category_summary,
         "learning_roadmap": learning_roadmap,

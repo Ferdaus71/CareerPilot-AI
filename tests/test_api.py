@@ -36,6 +36,7 @@ def test_json_analysis_endpoint() -> None:
     assert payload["missing_skill_count"] >= 0
     assert payload["job_skill_count"] >= 0
     assert payload["best_role"]
+    assert payload["recommended_roles"]
     assert payload["top_strengths"]
     assert payload["category_summary"]
     assert payload["learning_roadmap"]
@@ -66,6 +67,7 @@ def test_uploaded_resume_analysis_endpoint() -> None:
     assert payload["missing_skill_count"] >= 0
     assert payload["job_skill_count"] >= 0
     assert payload["best_role"]
+    assert payload["recommended_roles"]
     assert payload["top_strengths"]
     assert payload["category_summary"]
     assert payload["learning_roadmap"]

@@ -31,16 +31,22 @@ def _role_scores_for_skills(matched_skills: list[str], missing_skills: list[str]
     return role_scores
 
 
-def infer_best_role(matched_skills: list[str], missing_skills: list[str]) -> str:
-    """Pick the strongest role alignment from the matched and missing skill mix."""
+def rank_roles(matched_skills: list[str], missing_skills: list[str]) -> list[str]:
+    """Return the strongest role fit options in ranked order."""
     role_scores = _role_scores_for_skills(matched_skills, missing_skills)
     if not role_scores:
-        return "Generalist Analyst"
+        return ["Generalist Analyst"]
 
-    best_role, best_score = min(role_scores.items(), key=lambda item: (-item[1], item[0]))
-    if best_score <= 0:
-        return "Generalist Analyst"
-    return best_role
+    ranked_roles = [role for role, score in sorted(role_scores.items(), key=lambda item: (-item[1], item[0])) if score > 0]
+    if not ranked_roles:
+        return ["Generalist Analyst"]
+    return ranked_roles[:5]
+
+
+def infer_best_role(matched_skills: list[str], missing_skills: list[str]) -> str:
+    """Pick the strongest role alignment from the matched and missing skill mix."""
+    ranked = rank_roles(matched_skills, missing_skills)
+    return ranked[0]
 
 
 def summarize_strengths(matched_skills: list[str]) -> list[str]:

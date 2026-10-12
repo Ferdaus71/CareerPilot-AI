@@ -46,6 +46,8 @@ def _render_results(resume_text: str, job_text: str) -> None:
     st.progress(min(1.0, max(0.0, analysis["skill_coverage"] / 100)))
 
     st.markdown(f"### Best-fit role: {analysis['best_role']}")
+    if analysis["recommended_roles"]:
+        st.write("Recommended roles: " + ", ".join(analysis["recommended_roles"]))
     if analysis["top_strengths"]:
         st.write("Top strengths: " + ", ".join(analysis["top_strengths"]))
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 from careerpilot.recommendations import (
     build_recommendations,
     infer_best_role,
+    rank_roles,
     summarize_strengths,
 )
 from careerpilot.skills import detect_skills, get_skill_gap
@@ -36,6 +37,7 @@ def test_infer_best_role_and_strengths() -> None:
     missing = ["cloud"]
 
     assert infer_best_role(matched, missing) == "Data Analyst"
+    assert rank_roles(matched, missing)
     strengths = summarize_strengths(matched)
     assert "sql" in strengths
     assert "python" in strengths

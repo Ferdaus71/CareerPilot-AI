@@ -30,6 +30,7 @@ class AnalysisResponse(BaseModel):
     missing_skill_count: int
     job_skill_count: int
     best_role: str
+    recommended_roles: list[str]
     top_strengths: list[str]
     category_summary: list[dict[str, object]]
     learning_roadmap: list[str]
@@ -63,6 +64,7 @@ def analyze_payload(payload: AnalysisRequest) -> AnalysisResponse:
         missing_skill_count=int(analysis["missing_skill_count"]),
         job_skill_count=int(analysis["job_skill_count"]),
         best_role=str(analysis["best_role"]),
+        recommended_roles=list(analysis["recommended_roles"]),
         top_strengths=list(analysis["top_strengths"]),
         category_summary=list(analysis["category_summary"]),
         learning_roadmap=list(analysis["learning_roadmap"]),
@@ -104,6 +106,7 @@ async def analyze_uploaded_resume(
         missing_skill_count=int(analysis["missing_skill_count"]),
         job_skill_count=int(analysis["job_skill_count"]),
         best_role=str(analysis["best_role"]),
+        recommended_roles=list(analysis["recommended_roles"]),
         top_strengths=list(analysis["top_strengths"]),
         category_summary=list(analysis["category_summary"]),
         learning_roadmap=list(analysis["learning_roadmap"]),
