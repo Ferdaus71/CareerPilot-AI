@@ -49,6 +49,16 @@ def _render_results(resume_text: str, job_text: str) -> None:
     if analysis["top_strengths"]:
         st.write("Top strengths: " + ", ".join(analysis["top_strengths"]))
 
+    if analysis["category_summary"]:
+        st.markdown("### Skill category summary")
+        for item in analysis["category_summary"]:
+            st.write(f"- {item['category']}: {item['matched']} matched, {item['missing']} missing")
+
+    if analysis["learning_roadmap"]:
+        st.markdown("### Learning roadmap")
+        for step in analysis["learning_roadmap"]:
+            st.write(f"- {step}")
+
     st.caption(
         "This score measures text similarity between the resume and job description. It is not a probability of being hired or a validated candidate-quality score."
     )

@@ -37,6 +37,8 @@ def test_json_analysis_endpoint() -> None:
     assert payload["job_skill_count"] >= 0
     assert payload["best_role"]
     assert payload["top_strengths"]
+    assert payload["category_summary"]
+    assert payload["learning_roadmap"]
     assert "resume_text" not in payload
 
 
@@ -65,6 +67,8 @@ def test_uploaded_resume_analysis_endpoint() -> None:
     assert payload["job_skill_count"] >= 0
     assert payload["best_role"]
     assert payload["top_strengths"]
+    assert payload["category_summary"]
+    assert payload["learning_roadmap"]
     assert "resume_text" not in payload
 
 

@@ -6,6 +6,7 @@ from careerpilot.recommendations import (
     infer_best_role,
     summarize_strengths,
 )
+from careerpilot.skill_catalog import SKILL_CATEGORIES
 from careerpilot.skills import detect_skills, get_skill_gap
 
 
@@ -44,6 +45,60 @@ def _build_match_summary(
     }
 
 
+def _build_category_summary(matched_skills: list[str], missing_skills: list[str]) -> list[dict[str, object]]:
+    category_totals: dict[str, dict[str, int]] = {}
+    for category, skill_names in SKILL_CATEGORIES.items():
+        category_totals[category] = {"matched": 0, "missing": 0}
+
+    for skill in matched_skills:
+        for category, skill_names in SKILL_CATEGORIES.items():
+            if skill in skill_names:
+                category_totals[category]["matched"] += 1
+
+    for skill in missing_skills:
+        for category, skill_names in SKILL_CATEGORIES.items():
+            if skill in skill_names:
+                category_totals[category]["missing"] += 1
+
+    summary: list[dict[str, object]] = []
+    for category, totals in category_totals.items():
+        if totals["matched"] or totals["missing"]:
+            summary.append(
+                {
+                    "category": category,
+                    "matched": totals["matched"],
+                    "missing": totals["missing"],
+                    "total": totals["matched"] + totals["missing"],
+                }
+            )
+
+    return summary
+
+
+def _build_learning_roadmap(missing_skills: list[str]) -> list[str]:
+    if not missing_skills:
+        return ["Continue refining the strongest matched skills with a small portfolio project and interview practice."]
+
+    roadmap: list[str] = []
+    for skill in missing_skills[:4]:
+        if skill == "python":
+            roadmap.append("Build a Python project that covers automation, APIs, and data processing workflows.")
+        elif skill == "sql":
+            roadmap.append("Practice SQL joins, window functions, and reporting queries on a realistic dataset.")
+        elif skill == "cloud":
+            roadmap.append("Deploy a small application on AWS or Azure and document the setup, monitoring, and scaling steps.")
+        elif skill == "machine learning":
+            roadmap.append("Create a reusable ML workflow with data cleaning, feature engineering, and evaluation metrics.")
+        elif skill == "data analysis":
+            roadmap.append("Complete a small analysis project with visualizations and a concise business recommendation.")
+        elif skill == "docker":
+            roadmap.append("Containerize a sample app and document how it runs in local and production environments.")
+        else:
+            roadmap.append(f"Create a portfolio project that demonstrates {skill} in a real business or technical scenario.")
+
+    return roadmap
+
+
 def build_analysis_result(resume_text: str, job_text: str) -> dict[str, object]:
     similarity = compare_resume_job(resume_text, job_text)
     skill_gap = get_skill_gap(resume_text, job_text)
@@ -60,6 +115,8 @@ def build_analysis_result(resume_text: str, job_text: str) -> dict[str, object]:
     )
     best_role = infer_best_role(skill_gap["matched_skills"], skill_gap["missing_skills"])
     top_strengths = summarize_strengths(skill_gap["matched_skills"])
+    category_summary = _build_category_summary(skill_gap["matched_skills"], skill_gap["missing_skills"])
+    learning_roadmap = _build_learning_roadmap(skill_gap["missing_skills"])
 
     return {
         "similarity": similarity,
@@ -77,4 +134,6 @@ def build_analysis_result(resume_text: str, job_text: str) -> dict[str, object]:
         "job_skill_count": len(sorted_job_skills),
         "best_role": best_role,
         "top_strengths": top_strengths,
+        "category_summary": category_summary,
+        "learning_roadmap": learning_roadmap,
     }
