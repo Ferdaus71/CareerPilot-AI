@@ -9,30 +9,10 @@ import streamlit as st
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from careerpilot.matching import compare_resume_job
 from careerpilot.pdf_extractor import extract_pdf_text
-from careerpilot.recommendations import build_recommendations
-from careerpilot.skills import detect_skills, get_skill_gap
+from careerpilot.service import build_analysis_result
 
 st.set_page_config(page_title="CareerPilot AI", page_icon="🚀", layout="wide")
-
-
-def build_analysis_result(resume_text: str, job_text: str) -> dict[str, object]:
-    similarity = compare_resume_job(resume_text, job_text)
-    skill_gap = get_skill_gap(resume_text, job_text)
-    career_focus = build_recommendations(skill_gap["missing_skills"])
-    resume_skills = detect_skills(resume_text)
-    job_skills = detect_skills(job_text)
-
-    return {
-        "similarity": similarity,
-        "matched_skills": skill_gap["matched_skills"],
-        "missing_skills": skill_gap["missing_skills"],
-        "recommendations": skill_gap["recommendations"],
-        "career_focus": career_focus,
-        "resume_skills": sorted(resume_skills),
-        "job_skills": sorted(job_skills),
-    }
 
 
 def _render_placeholder_results() -> None:
