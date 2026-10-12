@@ -8,6 +8,10 @@ CAREER_FOCUS_MAP: dict[str, tuple[str, ...]] = {
     "data analysis": ("Data Analyst", "Product Analyst", "Analytics Engineer"),
     "project management": ("Project Manager", "Technical Program Manager", "Scrum Master"),
     "software engineering": ("Software Engineer", "Back-end Engineer", "Full-Stack Engineer"),
+    "data engineering": ("Data Engineer", "Analytics Engineer", "ETL Engineer"),
+    "business intelligence": ("Business Intelligence Analyst", "Analytics Engineer", "Reporting Analyst"),
+    "devops": ("DevOps Engineer", "Platform Engineer", "Cloud Engineer"),
+    "product analytics": ("Product Analyst", "Growth Analyst", "Business Analyst"),
 }
 
 
@@ -20,7 +24,7 @@ def build_recommendations(missing_skills: list[str]) -> list[str]:
     recommendations: list[str] = []
     for skill in missing_skills[:5]:
         lower_skill = skill.lower()
-        focus_roles = CAREER_FOCUS_MAP.get(lower_skill, (skill,))
+        focus_roles = CAREER_FOCUS_MAP.get(lower_skill, (skill.title(),))
         for role in focus_roles:
             if role not in seen:
                 seen.add(role)
