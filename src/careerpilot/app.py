@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -16,6 +17,24 @@ from careerpilot.skills import detect_skills, get_skill_gap
 st.set_page_config(page_title="CareerPilot AI", page_icon="🚀", layout="wide")
 
 
+def build_analysis_result(resume_text: str, job_text: str) -> dict[str, object]:
+    similarity = compare_resume_job(resume_text, job_text)
+    skill_gap = get_skill_gap(resume_text, job_text)
+    career_focus = build_recommendations(skill_gap["missing_skills"])
+    resume_skills = detect_skills(resume_text)
+    job_skills = detect_skills(job_text)
+
+    return {
+        "similarity": similarity,
+        "matched_skills": skill_gap["matched_skills"],
+        "missing_skills": skill_gap["missing_skills"],
+        "recommendations": skill_gap["recommendations"],
+        "career_focus": career_focus,
+        "resume_skills": sorted(resume_skills),
+        "job_skills": sorted(job_skills),
+    }
+
+
 def _render_placeholder_results() -> None:
     st.subheader("Analysis results")
     st.info(
@@ -24,14 +43,19 @@ def _render_placeholder_results() -> None:
 
 
 def _render_results(resume_text: str, job_text: str) -> None:
-    score = compare_resume_job(resume_text, job_text)
-    resume_skills = detect_skills(resume_text)
-    job_skills = detect_skills(job_text)
-    skill_gap = get_skill_gap(resume_text, job_text)
-    career_focus = build_recommendations(skill_gap["missing_skills"])
+    analysis = build_analysis_result(resume_text, job_text)
+    score = analysis["similarity"]
+    skill_gap = {
+        "matched_skills": analysis["matched_skills"],
+        "missing_skills": analysis["missing_skills"],
+        "recommendations": analysis["recommendations"],
+    }
+    resume_skills = analysis["resume_skills"]
+    job_skills = analysis["job_skills"]
+    career_focus = analysis["career_focus"]
 
     st.subheader("Analysis results")
-    st.metric("Resume-to-job similarity", f"{score['score'] * 100:.1f}%")
+    st.metric("Resume-to-job similarity", f"{float(score['score']) * 100:.1f}%")
     st.caption(
         "This score measures text similarity between the resume and job description. It is not a probability of being hired or a validated candidate-quality score."
     )
@@ -66,9 +90,22 @@ def _render_results(resume_text: str, job_text: str) -> None:
 
     if resume_skills or job_skills:
         st.markdown("### Skill overview")
-        st.write(f"Resume skills: {', '.join(sorted(resume_skills)) or 'None detected'}")
-        st.write(f"Job skills: {', '.join(sorted(job_skills)) or 'None detected'}")
+        st.write(f"Resume skills: {', '.join(resume_skills) or 'None detected'}")
+        st.write(f"Job skills: {', '.join(job_skills) or 'None detected'}")
         st.caption("A skill may not be detected in the text even when a candidate has practical experience with it.")
+
+    resume_preview = " ".join(resume_text.split())
+    if resume_preview:
+        with st.expander("Resume text preview (safe, shortened)"):
+            st.write(resume_preview[:600])
+
+    report_payload = json.dumps(analysis, indent=2, ensure_ascii=False)
+    st.download_button(
+        label="Download analysis report",
+        data=report_payload,
+        file_name="careerpilot_report.json",
+        mime="application/json",
+    )
 
 
 def main() -> None:

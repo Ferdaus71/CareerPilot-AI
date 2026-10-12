@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import fitz
 
+from careerpilot.app import build_analysis_result
 from careerpilot.matching import calculate_similarity, compare_resume_job
 from careerpilot.pdf_extractor import extract_pdf_text
 from careerpilot.recommendations import build_recommendations
@@ -84,3 +85,16 @@ def test_skill_gap_and_recommendation_engine() -> None:
     recommendations = build_recommendations(gap["missing_skills"])
     assert recommendations
     assert any("Machine Learning Engineer" in item or "Data Scientist" in item for item in recommendations)
+
+
+def test_analysis_result_contains_complete_dashboard_payload() -> None:
+    resume = "Python developer with SQL and data analysis experience."
+    job = "Python, SQL, machine learning, and cloud requirements."
+
+    result = build_analysis_result(resume, job)
+    assert "similarity" in result
+    assert result["matched_skills"]
+    assert "machine learning" in result["missing_skills"]
+    assert result["career_focus"]
+    assert isinstance(result["resume_skills"], list)
+    assert isinstance(result["job_skills"], list)
