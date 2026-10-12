@@ -1,16 +1,24 @@
 # CareerPilot AI
 
-CareerPilot AI is a Python-based application for resume analysis, job matching, and career guidance. The platform helps users compare a resume with a job description, identify missing skills, and receive clear recommendations for upskilling.
+CareerPilot AI is a Python-based resume analysis and career guidance platform. It helps job seekers compare a resume with a role description, detect relevant skills, identify missing capabilities, and receive practical next steps for upskilling.
+
+## Problem statement
+Many job seekers struggle to translate their experience into a strong match for a target role. CareerPilot AI provides a transparent, explainable baseline for:
+- checking how closely a resume matches a job description
+- identifying skills present in both documents
+- surfacing skills that may be missing
+- suggesting concrete ways to strengthen a resume and career plan
 
 ## Features
 - Upload a PDF resume
 - Paste or type a job description
-- Compare resume text with job text using TF-IDF and cosine similarity
-- Detect matching and missing skills
-- Recommend next steps based on skill gaps
-- Run as a local Streamlit application
+- Review a similarity score based on TF-IDF and cosine similarity
+- Detect matched and missing skills using a configurable skill catalog
+- Receive role-oriented recommendations based on the analysis
+- Run a local Streamlit dashboard
+- Use a FastAPI backend for structured JSON analysis
 
-## Tech Stack
+## Technology stack
 - Python
 - Streamlit
 - FastAPI
@@ -19,8 +27,20 @@ CareerPilot AI is a Python-based application for resume analysis, job matching, 
 - Pytest
 - Ruff
 - GitHub Actions
+- Docker
 
-## Local setup on Windows
+## Architecture overview
+The project is organized into modular components:
+- `src/careerpilot/app.py` — Streamlit user interface
+- `src/careerpilot/api.py` — API entry point and request handling
+- `src/careerpilot/service.py` — shared analysis orchestration
+- `src/careerpilot/pdf_extractor.py` — PDF text extraction and validation
+- `src/careerpilot/matching.py` — TF-IDF similarity logic
+- `src/careerpilot/skills.py` — skill detection and skill-gap calculation
+- `src/careerpilot/recommendations.py` — transparent career guidance logic
+- `tests/` — automated tests for matching, PDF handling, skill analysis, and API behavior
+
+## Windows setup
 
 1. Clone the repository:
    ```powershell
@@ -37,22 +57,59 @@ CareerPilot AI is a Python-based application for resume analysis, job matching, 
    python -m pip install --upgrade pip
    pip install -r requirements.txt
    ```
-4. Run the app:
+4. Start the Streamlit app:
    ```powershell
    streamlit run src\careerpilot\app.py
    ```
+5. Start the API locally:
+   ```powershell
+   uvicorn careerpilot.api:app --reload --host 0.0.0.0 --port 8000
+   ```
 
-## Testing
+## API documentation
+When the API server is running, view the docs here:
+- http://localhost:8000/docs
+- http://localhost:8000/redoc
+
+## Testing and linting
 
 ```powershell
 pytest -q
-```
-
-## Linting
-
-```powershell
 ruff check .
 ```
 
+## Docker usage
+Build the image:
+
+```powershell
+docker build -t careerpilot-ai .
+```
+
+Run the app container:
+
+```powershell
+docker run -p 8501:8501 careerpilot-ai
+```
+
+This runs the Streamlit dashboard by default. If you want to use the API in a container, run the app with a custom command:
+
+```powershell
+docker run -p 8000:8000 careerpilot-ai python -m uvicorn careerpilot.api:app --host 0.0.0.0 --port 8000
+```
+
+## Known limitations
+- The baseline matching model uses TF-IDF and cosine similarity; it measures text similarity rather than hiring probability.
+- The system does not include OCR for scanned image-only PDFs in the initial version.
+- A skill may not be explicitly detected even if a candidate has practical experience with it.
+- Recommendations are explainable and rule-based rather than predictive or guaranteed to produce interviews.
+
+## Privacy and safety
+- Uploaded resumes are processed in memory and are not intentionally stored to disk.
+- The application does not log or expose full resume text in API responses.
+- Avoid uploading sensitive personal data to local or shared environments.
+
 ## Project status
-The project is under active development and follows an incremental build plan from foundation setup through PDF extraction, matching, skill analysis, and recommendation logic.
+This project follows an incremental build workflow: foundation, Streamlit UI, PDF extraction, matching, skill-gap analysis, API integration, testing, and CI automation.
+
+## GitHub repository
+https://github.com/Ferdaus71/CareerPilot-AI
