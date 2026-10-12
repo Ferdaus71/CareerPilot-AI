@@ -23,6 +23,9 @@ class AnalysisResponse(BaseModel):
     missing_skills: list[str]
     recommendations: list[str]
     career_focus: list[str]
+    match_status: str
+    match_summary: str
+    skill_coverage: float
 
 
 @app.get("/health")
@@ -46,6 +49,9 @@ def analyze_payload(payload: AnalysisRequest) -> AnalysisResponse:
         missing_skills=list(analysis["missing_skills"]),
         recommendations=list(analysis["recommendations"]),
         career_focus=list(analysis["career_focus"]),
+        match_status=str(analysis["match_status"]),
+        match_summary=str(analysis["match_summary"]["summary"]),
+        skill_coverage=float(analysis["skill_coverage"]),
     )
 
 
@@ -77,4 +83,7 @@ async def analyze_uploaded_resume(
         missing_skills=list(analysis["missing_skills"]),
         recommendations=list(analysis["recommendations"]),
         career_focus=list(analysis["career_focus"]),
+        match_status=str(analysis["match_status"]),
+        match_summary=str(analysis["match_summary"]["summary"]),
+        skill_coverage=float(analysis["skill_coverage"]),
     )

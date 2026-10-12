@@ -15,6 +15,7 @@ Many job seekers struggle to translate their experience into a strong match for 
 - Review a similarity score based on TF-IDF and cosine similarity
 - Detect matched and missing skills using a configurable skill catalog
 - Receive role-oriented recommendations based on the analysis
+- Review a clear match status and skill-coverage summary
 - Run a local Streamlit dashboard
 - Use a FastAPI backend for structured JSON analysis
 - Export a JSON analysis report from the dashboard
@@ -101,7 +102,7 @@ docker run -p 8000:8000 careerpilot-ai python -m uvicorn careerpilot.api:app --h
 
 ## Known limitations
 - The baseline matching model uses TF-IDF and cosine similarity; it measures text similarity rather than hiring probability.
-- The system does not include OCR for scanned image-only PDFs in the initial version.
+- OCR fallback supports scanned image-only PDFs when the optional OCR dependencies are installed in the environment.
 - A skill may not be explicitly detected even if a candidate has practical experience with it.
 - Recommendations are explainable and rule-based rather than predictive or guaranteed to produce interviews.
 - The similarity score is not a validated candidate-quality score and should not be interpreted as hiring likelihood.
@@ -118,4 +119,4 @@ This project follows an incremental build workflow: foundation, Streamlit UI, PD
 https://github.com/Ferdaus71/CareerPilot-AI
 
 ## Final review notes
-The project currently delivers a working, tested baseline for resume/job matching and skill-gap analysis. The implementation is intentionally explainable and transparent rather than predictive or probabilistic. Future enhancements could include richer NLP models, OCR support, deeper role taxonomy, and expanded deployment configuration.
+The project currently delivers a working, tested baseline for resume/job matching and skill-gap analysis. The implementation is intentionally explainable and transparent rather than predictive or probabilistic. Recent improvements include a clearer match-status summary and OCR fallback support for scanned PDFs when the optional dependencies are available. Future enhancements could include richer NLP models, deeper role taxonomy, and expanded deployment configuration.

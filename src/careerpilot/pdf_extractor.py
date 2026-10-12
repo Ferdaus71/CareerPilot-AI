@@ -30,7 +30,7 @@ def _attempt_ocr_from_document(document: fitz.Document) -> str:
 
     try:
         pytesseract.get_tesseract_version()
-    except Exception:
+    except (FileNotFoundError, OSError, RuntimeError, ValueError):
         return ""
 
     pages: list[str] = []

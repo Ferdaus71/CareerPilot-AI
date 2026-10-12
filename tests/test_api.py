@@ -29,6 +29,9 @@ def test_json_analysis_endpoint() -> None:
     assert payload["score"] > 0
     assert payload["percentage"] > 0
     assert payload["missing_skills"]
+    assert payload["match_status"] in {"strong", "moderate", "weak"}
+    assert payload["match_summary"]
+    assert 0 <= payload["skill_coverage"] <= 100
     assert "resume_text" not in payload
 
 
@@ -49,6 +52,9 @@ def test_uploaded_resume_analysis_endpoint() -> None:
     payload = response.json()
     assert payload["score"] > 0
     assert payload["matched_skills"]
+    assert payload["match_status"] in {"strong", "moderate", "weak"}
+    assert payload["match_summary"]
+    assert 0 <= payload["skill_coverage"] <= 100
     assert "resume_text" not in payload
 
 

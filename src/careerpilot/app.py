@@ -36,6 +36,8 @@ def _render_results(resume_text: str, job_text: str) -> None:
 
     st.subheader("Analysis results")
     st.metric("Resume-to-job similarity", f"{float(score['score']) * 100:.1f}%")
+    match_summary = analysis["match_summary"]
+    st.info(f"{match_summary['label']} • {match_summary['summary']}")
     st.caption(
         "This score measures text similarity between the resume and job description. It is not a probability of being hired or a validated candidate-quality score."
     )
