@@ -36,3 +36,27 @@ def test_cli_main_prints_json(tmp_path: Path, capsys) -> None:
     payload = json.loads(captured.out)
     assert payload["matched_skills"]
     assert payload["best_role"]
+
+
+def test_cli_main_writes_output_file(tmp_path: Path) -> None:
+    resume_path = tmp_path / "resume.pdf"
+    output_path = tmp_path / "report" / "analysis.json"
+    document = fitz.open()
+    page = document.new_page()
+    page.insert_text((72, 72), "Python developer with SQL and analytics experience.")
+    resume_path.write_bytes(document.tobytes())
+    document.close()
+
+    exit_code = main([
+        "--resume",
+        str(resume_path),
+        "--job-description",
+        "Python and SQL experience",
+        "--output",
+        str(output_path),
+    ])
+
+    assert exit_code == 0
+    payload = json.loads(output_path.read_text(encoding="utf-8"))
+    assert payload["matched_skills"]
+    assert payload["best_role"]

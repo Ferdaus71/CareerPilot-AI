@@ -28,6 +28,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--resume", required=True, help="Path to the resume PDF file.")
     parser.add_argument("--job-description", help="Job description text to compare against.")
     parser.add_argument("--job-file", help="Optional path to a text file containing the job description.")
+    parser.add_argument(
+        "--output",
+        help="Optional path to save the JSON analysis output instead of printing it to stdout.",
+    )
     return parser
 
 
@@ -44,7 +48,14 @@ def main(argv: list[str] | None = None) -> int:
         job_description = args.job_description
 
     analysis = analyze_resume_pdf(args.resume, job_description)
-    print(json.dumps(analysis, indent=2, ensure_ascii=False))
+    output_text = json.dumps(analysis, indent=2, ensure_ascii=False)
+
+    if args.output:
+        output_path = Path(args.output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(output_text + "\n", encoding="utf-8")
+    else:
+        print(output_text)
     return 0
 
 

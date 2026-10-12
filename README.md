@@ -69,6 +69,25 @@ The project is organized into modular components:
    uvicorn careerpilot.api:app --reload --host 0.0.0.0 --port 8000
    ```
 
+## CLI usage
+After installing the package with `pip install -e .`, you can run a resume analysis directly from the terminal:
+
+```powershell
+careerpilot --resume .\samples\resume.pdf --job-file .\samples\job-description.txt
+```
+
+To save the analysis as JSON instead of printing it to stdout:
+
+```powershell
+careerpilot --resume .\samples\resume.pdf --job-description "Python and SQL engineer with cloud experience" --output .\output\analysis.json
+```
+
+You can also run the module directly:
+
+```powershell
+python -m careerpilot --resume .\samples\resume.pdf --job-file .\samples\job-description.txt
+```
+
 ## API documentation
 When the API server is running, view the docs here:
 - http://localhost:8000/docs
