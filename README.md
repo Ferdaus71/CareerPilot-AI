@@ -69,6 +69,14 @@ The project is organized into modular components:
    uvicorn careerpilot.api:app --reload --host 0.0.0.0 --port 8000
    ```
 
+## Deploy to Streamlit Community Cloud
+
+1. In Streamlit Community Cloud, create or open the app connected to this repository.
+2. Set the repository to `Ferdaus71/CareerPilot-AI`, the branch to `main`, and the main file path to `streamlit_app.py`.
+3. Save the settings and deploy or reboot the app.
+
+Do not use `src/careerpilot/__main__.py` as the Streamlit entrypoint; it runs the command-line interface. The `-e .` requirement installs this `src/`-layout package in Streamlit's environment so its imports resolve.
+
 ## CLI usage
 After installing the package with `pip install -e .`, you can run a resume analysis directly from the terminal:
 
